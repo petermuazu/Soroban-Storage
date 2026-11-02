@@ -1,5 +1,6 @@
 extern crate std;
 
+mod costs;
 
 use crate::*;
 use soroban_sdk::{
