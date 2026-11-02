@@ -6,7 +6,7 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [0.1.0]
+## [0.1.0] - 2026-11-02
 
 ### Added
 
@@ -25,3 +25,6 @@ uses [Semantic Versioning](https://semver.org/).
 - `StorageError` contract errors (`NotFound = 1100`, `WrongType = 1101`).
 - `minutes`, `hours`, `days` ledger-time helpers.
 - `testutils` feature with `ttl(&env, &key)` for asserting TTLs in tests.
+
+[Unreleased]: https://github.com/soroban-dev-labs/Soroban-Storage/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/soroban-dev-labs/Soroban-Storage/releases/tag/v0.1.0

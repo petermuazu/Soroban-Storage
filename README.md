@@ -28,10 +28,10 @@ key's type. Reads and writes keep the TTL topped up.
 ```toml
 [dependencies]
 soroban-sdk = "29"
-soroban-storage = { git = "https://github.com/soroban-dev-labs/Soroban-Storage" }
+soroban-storage = "0.1"
 
 [dev-dependencies]
-soroban-storage = { git = "https://github.com/soroban-dev-labs/Soroban-Storage", features = ["testutils"] }
+soroban-storage = { version = "0.1", features = ["testutils"] }
 ```
 
 ```rust
