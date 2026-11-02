@@ -71,17 +71,35 @@ entry_ttl() {
 instance_ttl() { ttl_of --durability persistent; }
 
 echo "Building vault example..."
-stellar contract build --package vault-example >/dev/null 2>&1
+stellar contract build --package vault-example >/dev/null
 WASM=target/wasm32v1-none/release/vault_example.wasm
 
+# The RPC can report healthy before friendbot is ready (common on fresh CI
+# runners), so retry funding until Horizon sees the account.
+fund() {
+  local name=$1 addr
+  stellar keys generate "$name" "${N[@]}" --overwrite >/dev/null 2>&1
+  addr=$(stellar keys address "$name")
+  for _ in $(seq 1 60); do
+    stellar keys fund "$name" "${N[@]}" >/dev/null 2>&1 || true
+    curl -sf "http://localhost:8000/accounts/$addr" >/dev/null && return 0
+    sleep 2
+  done
+  fail "could not fund $name"
+}
+
 echo "Funding accounts..."
-stellar keys generate e2e-admin "${N[@]}" --fund --overwrite >/dev/null 2>&1
-stellar keys generate e2e-user "${N[@]}" --fund --overwrite >/dev/null 2>&1
+fund e2e-admin
+fund e2e-user
 ADMIN=$(stellar keys address e2e-admin)
 USER=$(stellar keys address e2e-user)
 
 echo "Deploying..."
-ID=$(stellar contract deploy --wasm "$WASM" --source e2e-admin "${N[@]}" -- --admin "$ADMIN" 2>/dev/null | tail -1)
+if ! out=$(stellar contract deploy --wasm "$WASM" --source e2e-admin "${N[@]}" -- --admin "$ADMIN" 2>&1); then
+  echo "$out" >&2
+  fail "deploy failed"
+fi
+ID=$(echo "$out" | tail -1)
 echo "  contract $ID"
 
 invoke() { stellar contract invoke --id "$ID" --source e2e-user "${N[@]}" -- "$@" 2>&1; }
