@@ -19,7 +19,7 @@ uses [Semantic Versioning](https://semver.org/).
   `update`, `try_update`, `remove`, `take`, `extend`, plus
   `extend_instance`.
 - Automatic TTL extension: new entries get the policy's full `extend_to`;
-  reads and overwrites extend only below `threshold`.
+  reads and overwrites extend only at or below `threshold`.
 - Compile-time validation of TTL policies; runtime clamping to the
   network's maximum TTL.
 - `StorageError` contract errors (`NotFound = 1100`, `WrongType = 1101`).

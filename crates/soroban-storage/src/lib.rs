@@ -128,7 +128,7 @@ impl<T: IntoVal<Env, Val> + TryFromVal<Env, Val>> Storable for T {
 // ---------------------------------------------------------------------------
 
 /// Threshold-gated extension: extends to `extend_to` only when the TTL is
-/// below `threshold`. Used for reads and for writes to existing entries.
+/// at or below `threshold`. Used for reads and for writes to existing entries.
 fn bump<K: TypedKey + ?Sized>(env: &Env, raw: &Val) {
     let (threshold, extend_to) = K::TTL.effective(env);
     K::Kind::extend(env, raw, threshold, extend_to);
@@ -225,7 +225,7 @@ pub fn has<K: TypedKey + ?Sized>(env: &Env, key: &K) -> bool {
 /// Writes `val` under `key`.
 ///
 /// A newly created entry is extended to the policy's full `extend_to`; an
-/// existing one is extended only if its TTL is below `threshold`.
+/// existing one is extended only if its TTL is at or below `threshold`.
 pub fn set<K: TypedKey + ?Sized>(env: &Env, key: &K, val: &K::Value) {
     let raw = key.to_key_val(env);
     let existed = K::Kind::has(env, &raw);

@@ -71,8 +71,8 @@ A `TtlPolicy { threshold, extend_to }` is attached to every key:
 | Operation | TTL effect |
 |---|---|
 | `set` / `update` / `try_update` creating a new entry | Extended to `extend_to` |
-| `set` / `update` / `try_update` on an existing entry | Extended to `extend_to` only if the TTL is below `threshold` |
-| `get`, `has`, `require`, `try_get`, `get_or`, `extend` | Extended to `extend_to` only if the TTL is below `threshold` |
+| `set` / `update` / `try_update` on an existing entry | Extended to `extend_to` only if the TTL is at or below `threshold` |
+| `get`, `has`, `require`, `try_get`, `get_or`, `extend` | Extended to `extend_to` only if the TTL is at or below `threshold` |
 | `remove`, `take` | Entry deleted |
 
 **Guarantee:** as long as an entry is accessed at least once every

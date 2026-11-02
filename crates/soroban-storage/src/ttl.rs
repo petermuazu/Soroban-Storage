@@ -42,7 +42,7 @@ pub const fn days(n: u32) -> u32 {
 /// * **Creating** an entry (`set`, `update`, ... on a missing key) extends
 ///   it so it lives for `extend_to` more ledgers.
 /// * **Reading or overwriting** an existing entry extends it to `extend_to`
-///   only when its remaining TTL is below `threshold`, so frequent access
+///   only when its remaining TTL is at or below `threshold`, so frequent access
 ///   does not pay rent for a small extension every time. Disable read
 ///   extensions with [`TtlPolicy::write_only`].
 ///
@@ -59,7 +59,7 @@ pub const fn days(n: u32) -> u32 {
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct TtlPolicy {
-    /// Extend only when the remaining TTL drops below this many ledgers.
+    /// Extend only when the remaining TTL is at or below this many ledgers.
     pub threshold: u32,
     /// Remaining TTL (in ledgers) after an extension.
     pub extend_to: u32,

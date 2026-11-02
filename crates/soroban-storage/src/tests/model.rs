@@ -77,7 +77,7 @@ impl Model {
     }
     fn touch(&mut self) {
         if let Some(e) = &mut self.entry {
-            if e.ttl < THRESHOLD {
+            if e.ttl <= THRESHOLD {
                 e.ttl = EXTEND_TO;
             }
         }
@@ -86,7 +86,7 @@ impl Model {
         match &mut self.entry {
             Some(e) => {
                 e.val = val;
-                if e.ttl < THRESHOLD {
+                if e.ttl <= THRESHOLD {
                     e.ttl = EXTEND_TO;
                 }
             }
