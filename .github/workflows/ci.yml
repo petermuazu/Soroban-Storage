@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  # Pinned so compile-fail test output (compiler messages) is reproducible.
+  # Bump deliberately and regenerate with TRYBUILD=overwrite.
+  RUST_VERSION: "1.99.1"
+  STELLAR_CLI_VERSION: "28.1.0"
+
+jobs:
+  check:
+    name: fmt, clippy, tests, docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test (unit, property, compile-fail, fee comparison)
+        run: cargo test --workspace
+
+      - name: Docs
+        run: cargo doc -p soroban-storage --no-deps --all-features
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+      - name: Package
+        run: cargo publish -p soroban-storage --dry-run
+
+  msrv:
+    name: MSRV (1.91)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.91
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check -p soroban-storage
+
+  e2e:
+    name: End-to-end on a local network
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          targets: wasm32v1-none
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install stellar-cli
+        run: |
+          curl -sSfL "https://github.com/stellar/stellar-cli/releases/download/v${STELLAR_CLI_VERSION}/stellar-cli-${STELLAR_CLI_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar xz -C /usr/local/bin stellar
+          stellar --version
+
+      - name: Run end-to-end checks
+        run: scripts/e2e-local.sh
