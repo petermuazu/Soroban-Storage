@@ -1,0 +1,17 @@
+error[E0080]: evaluation panicked: TtlPolicy: extend_to must be greater than zero
+  --> tests/ui/zero_extend_to.rs:9:1
+   |
+ 9 | / storage_keys! {
+10 | |     instance(BROKEN) Counter => u64;
+11 | | }
+   | |_^ evaluation of `_` failed inside this call
+   |
+note: inside `TtlPolicy::validated`
+  --> $RUST/core/src/panic.rs
+   |
+   = note: the failure occurred here
+   |
+  ::: src/ttl.rs
+   |
+   |             panic!("TtlPolicy: extend_to must be greater than zero");
+   |             -------------------------------------------------------- in this macro invocation

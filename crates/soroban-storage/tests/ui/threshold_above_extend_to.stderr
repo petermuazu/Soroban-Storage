@@ -1,0 +1,25 @@
+error[E0080]: evaluation panicked: TtlPolicy: threshold must not exceed extend_to
+ --> tests/ui/threshold_above_extend_to.rs:5:16
+  |
+5 |     persistent(TtlPolicy::new(500, 100)) Balance(owner: Address) => i128;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `_` failed inside this call
+  |
+note: inside `TtlPolicy::new`
+ --> src/ttl.rs
+  |
+  | /         Self {
+  | |             threshold,
+  | |             extend_to,
+  | |             bump_on_read: true,
+  | |         }
+  | |         .validated()
+  | |____________________^
+note: inside `TtlPolicy::validated`
+ --> $RUST/core/src/panic.rs
+  |
+  = note: the failure occurred here
+  |
+ ::: src/ttl.rs
+  |
+  |             panic!("TtlPolicy: threshold must not exceed extend_to");
+  |             -------------------------------------------------------- in this macro invocation
